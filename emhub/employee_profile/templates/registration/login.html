@@ -1,0 +1,13 @@
+{% block content %}
+  <h2 style="text-align : center;">Вход в систему</h2>
+    <form method="post" style="width: 300px; margin: 0 auto;">
+      {% csrf_token %}
+      <table>
+        {{ form }}
+        <tr>
+          <td>&nbsp;</td>
+          <td><input type="submit" value="Войти"></td>
+        </tr>                
+      </table>
+    </form>
+{% endblock %}

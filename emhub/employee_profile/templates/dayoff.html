@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <title>Отгулы</title>
+</head>
+<body>
+    {% include "header.html" %}
+    <h2>Действия над отгулами</h2>
+    <a href="dayoff/application_form">
+        <button>Оформить заявление</button>
+    </a>
+    <p>&nbsp;</p>
+
+    {% if dayoff %}
+        <table style="border-collapse: collapse; text-align: center;">
+            <thead>
+                <tr>
+                    <th style="border: 2px solid black;">Дата от</th>
+                    <th style="border: 2px solid black;">Дата до</th>
+                    <th style="border: 2px solid black;">Причина</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for day in dayoffs %}
+                <tr>
+                    <td style="border: 2px solid black;
+                    text-align: center;
+                    padding: 5px;">{{ day.date_from|date:"d.m.Y" }}</td>
+                    <td style="border: 2px solid black;
+                    text-align: center;
+                    padding: 5px;">{{ day.date_to|date:"d.m.Y" }}</td>
+                    <td style="border: 2px solid black;
+                    text-align: center;
+                    padding: 5px;">{{ day.reason }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p><i>История отгулов пуста</i></p>
+    {% endif %}
+</body>
+</html>

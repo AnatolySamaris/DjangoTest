@@ -1,0 +1,29 @@
+{% load static %}
+<header>
+    <nav>
+        <ul class="hr">
+            <li>
+                <a href="/">
+                    <button>Профиль</button>
+                </a>
+            </li>
+            <li>
+                <a href="/payments">
+                    <button>Начисления</button>
+                </a>
+            </li>
+            <li>
+                <a href="/dayoff">
+                    <button>Отгулы</button>
+                </a>
+            <li>
+                <a href="{% url 'logout' %}">
+                    <button>Выйти</button>
+                </a>
+            </li>
+            </li>
+        </ul>
+    </hr>
+    </nav>
+</header>
+<hr style="border: 2px solid black;">

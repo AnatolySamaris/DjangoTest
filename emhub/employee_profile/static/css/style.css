@@ -1,0 +1,24 @@
+table {
+    border-collapse: collapse;
+    text-align: center;
+}
+
+th, td {
+    border: 2px solid black;
+}
+
+ul.hr {
+    display: inline-block;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+  
+ul.hr > li {
+    display: inline-block;
+    padding: 0 10px;
+}
+
+li {
+    list-style-type: none;
+}
