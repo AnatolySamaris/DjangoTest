@@ -19,8 +19,8 @@ class Payment(models.Model):
 # Данные отсюда будут использоваться при создании файла. Задаёт шаблон заявления, не больше
 class Application(models.Model):
     company_name = models.CharField(max_length=216, verbose_name='Название компании')
-    director = models.CharField(max_length=216, verbose_name='ФИО ген. директора')
-    application_file = models.FileField(upload_to='docPatterns', verbose_name='Шаблон заявления')
+    seo_name = models.CharField(max_length=216, verbose_name='ФИО ген. директора')
+    application_file = models.FileField(upload_to='docPattern', verbose_name='Шаблон заявления')
 
 
 class Dayoff(models.Model):
