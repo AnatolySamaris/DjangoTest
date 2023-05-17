@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
 from django.http import HttpResponse
 from django.conf import settings
 
@@ -36,7 +35,7 @@ def prepare_text(text: list, line_width=80) -> list:
     return new_text
 
 
-def make_application(template: str, data: dict, filename='DayoffApplication.pdf', line_width=80):
+def make_application(template: str, data: dict, line_width=80):
     in_file = PdfReader(template)
     page = in_file.pages[0].extract_text()
     for data_pair in data.items():  # Подставляем свои данные
@@ -63,30 +62,30 @@ def make_application(template: str, data: dict, filename='DayoffApplication.pdf'
         line += 1
     pdf.cell(0, 10, txt=page[line], ln=1, align='R') # Дата и подпись
 
-    filepath = os.path.join(settings.MEDIA_ROOT, 'applications', filename)
+    filepath = os.path.join(settings.MEDIA_ROOT, 'applications', 'DayoffApplication.pdf')
     pdf.output(filepath)
 
     with open(filepath, 'rb') as file:  # Скачиваем файл
         mime_type, _ = mimetypes.guess_type(filepath)
-        response = HttpResponse(file, content_type=mime_type)
-        response['Content-Disposition'] = 'attachment, filename=%s ' % filename
+        response = HttpResponse(file, 
+                                content_type=mime_type,
+                                headers={
+                                    'Content-Disposition': 'attachment; filename=%s' %filepath
+                                })
         return response
 
 
 @login_required
 def profile(request):
-    if request.user.is_authenticated:
-        user = Employee.objects.get(user=request.user)
-        # Перечисляем данные явно, иначе не показывает фото
-        user_data = {
-            'name': user.name,
-            'birthday': user.birthday,
-            'salary': user.salary,
-            'photo': user.photo
-        }
-        return render(request, 'profile.html', user_data)
-    else:
-        return redirect('login')
+    user = Employee.objects.get(user=request.user)
+    # Перечисляем данные явно, иначе не показывает фото
+    user_data = {
+        'name': user.name,
+        'birthday': user.birthday,
+        'salary': user.salary,
+        'photo': user.photo
+    }
+    return render(request, 'profile.html', user_data)
 
 
 @login_required
@@ -97,18 +96,20 @@ def payments(request):
 
 @login_required
 def dayoff(request):
-    dayoff = Dayoff.objects.filter(user=request.user)
-    return render(request, 'dayoff.html', {'dayoff': dayoff})
+    try:
+        dayoff = Dayoff.objects.filter(user=request.user)
+        return render(request, 'dayoff.html', {'dayoff': dayoff})
+    except:
+        return render(request, 'dayoff.html', {'dayoff': None})
 
 
-# Переделать в модальное с ajax или починить редирект
 @login_required 
 def application_form(request):
     form = ApplicationForm()
     if request.method == 'POST':
         form = ApplicationForm(request.POST)
         if form.is_valid():
-            # Предполагается, что мы храним только один шаблон
+            # Предполагается, что мы храним только один шаблон заявления
             pattern = Application.objects.all()[0]
             user = Employee.objects.get(user=request.user)
             date_from = form.cleaned_data['date_from']
@@ -119,13 +120,14 @@ def application_form(request):
                 '{{SEO_name}}': pattern.seo_name,
                 '{{employee_name}}' : user.name,
                 '{{reason}}': form.cleaned_data['reason'],
-                '{{date_from}}': date_from,
-                '{{amount_days}}': date_delta.days(),
-                '{{current_date}}': datetime.datetime.today().strftime('%d.%m.%Y'),
+                '{{date_from}}': date_from.strftime('%d.%m.%Y'),
+                '{{amount_days}}': str(date_delta.days),
+                '{{current_data}}': str(datetime.datetime.today().strftime('%d.%m.%Y')),
             }
-            make_application(pattern.application_file, file_data)
-            os.remove(os.path.join(settings.MEDIA_ROOT, 'applications', 'DayoffApplication.pdf'))
-            return redirect(reverse('dayoff'))
+            #new_dayoff = Dayoff(request.user, date_from=date_from, date_to=date_to, reason=form.cleaned_data['reason'])
+            #new_dayoff.save()
+            #return redirect(reverse('dayoff'))
+            return make_application(pattern.application_file, file_data)
         else:
             return render(request, 'application_form.html', {'form': form})
     else:

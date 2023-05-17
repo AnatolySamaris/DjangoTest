@@ -10,6 +10,7 @@
     {% include "header.html" %}
     <h2>История начислений</h2>
 
+    {% if payments %}
     <table style="border-collapse: collapse; text-align: center;">
         <thead>
             <tr>
@@ -30,5 +31,8 @@
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+        <p><i>Начислений нет</i></p>
+    {% endif %}
 </body>
 </html>

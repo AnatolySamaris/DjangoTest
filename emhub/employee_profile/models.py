@@ -24,7 +24,7 @@ class Application(models.Model):
 
 
 class Dayoff(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', default="")
     date_from = models.DateField(verbose_name='От:')
     date_to = models.DateField(verbose_name='До:')
     reason = models.TextField(max_length=256, verbose_name='Причина')
